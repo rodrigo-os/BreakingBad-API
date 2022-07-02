@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -20,10 +19,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -33,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.example.breakingbad.data.Character
+import com.example.breakingbad.data.domain.Character
 import com.example.breakingbad.R
 
 private const val BASE_URL = "https://www.breakingbadapi.com"
@@ -42,7 +39,7 @@ private const val BASE_URL = "https://www.breakingbadapi.com"
 fun CharacterListScreen(
     charactersViewModel: CharactersViewModel
 ) {
-    val charactersList by charactersViewModel.characterList.observeAsState(listOf())
+    val charactersList by charactersViewModel.characters.observeAsState(listOf())
     CharacterList(characterList = charactersList)
 }
 

@@ -11,12 +11,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.breakingbad.ui.theme.BreakingBadTheme
 import com.example.breakingbad.views.CharacterListScreen
+import com.example.breakingbad.views.CharacterVMFactory
 import com.example.breakingbad.views.CharactersViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val viewModel by viewModels<CharactersViewModel>()
+        val viewModel by viewModels<CharactersViewModel> {
+            CharacterVMFactory(
+                (this.applicationContext as BreakingBadApplication).repository
+            )
+        }
         setContent {
             BreakingBadTheme {
                 Surface(

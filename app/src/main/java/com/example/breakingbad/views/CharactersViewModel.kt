@@ -1,32 +1,45 @@
 package com.example.breakingbad.views
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.breakingbad.network.BreakingBadApi
+import androidx.lifecycle.*
+import com.example.breakingbad.data.source.BreakingBadApi
 import kotlinx.coroutines.launch
-import com.example.breakingbad.data.Character
+import com.example.breakingbad.data.domain.Character
+import com.example.breakingbad.data.repository.CharacterRepository
+import java.io.IOException
+import java.lang.IllegalArgumentException
 
-class CharactersViewModel : ViewModel() {
-    private val _characterList = MutableLiveData<List<Character>>()
-    val characterList: LiveData<List<Character>>
-        get() = _characterList
+class CharactersViewModel(private val repository: CharacterRepository) : ViewModel() {
 
     init {
-        getCharacters()
+        if(repository.characters.value.isNullOrEmpty()){
+            refreshDataFromRepository()
+        }
     }
 
-    private fun getCharacters() {
+    val characters = repository.characters
+
+    private val _eventNetworkError = MutableLiveData<String>("")
+
+    private fun refreshDataFromRepository(){
         viewModelScope.launch {
             try {
-                val listResult = BreakingBadApi.retrofitService.getCharacters()
-                _characterList.value = listResult
-            } catch (e: Exception) {
-                _characterList.value = null
-                Log.d("GetCharacters", "${e.message}")
+                repository.refreshCharacters()
+                _eventNetworkError.value = ""
+            }catch (networkError: IOException){
+                Log.d("Error", "${networkError.message}")
+                _eventNetworkError.value = networkError.message
             }
         }
     }
+
+}
+
+class CharacterVMFactory(private val repository: CharacterRepository): ViewModelProvider.Factory{
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if(modelClass.isAssignableFrom(CharactersViewModel::class.java))
+            return CharactersViewModel(repository) as T
+        throw IllegalArgumentException("Unknown ViewModel Class")
+    }
+
 }
