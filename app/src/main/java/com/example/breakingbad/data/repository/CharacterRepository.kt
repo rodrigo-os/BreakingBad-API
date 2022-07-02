@@ -14,12 +14,12 @@ import kotlinx.coroutines.withContext
 class CharacterRepository(private val characterDao: CharacterDao) {
     val characters: LiveData<List<Character>> = Transformations.map(
         characterDao.getAllCharacters()
-    ){
+    ) {
         it.asDomainModel()
     }
 
-    suspend fun refreshCharacters(){
-        withContext(Dispatchers.IO){
+    suspend fun refreshCharacters() {
+        withContext(Dispatchers.IO) {
             val characters = BreakingBadApi.retrofitService.getCharacters()
             val charactersContainer = SourceCharacterContainer(characters)
             characterDao.insertAllCharacters(charactersContainer.asLocalModel())

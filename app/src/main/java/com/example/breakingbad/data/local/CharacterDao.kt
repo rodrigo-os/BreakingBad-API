@@ -5,7 +5,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.breakingbad.data.domain.Character
 
 @Dao
 interface CharacterDao {
@@ -14,5 +13,4 @@ interface CharacterDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAllCharacters(characters: List<LocalCharacter>)
-
 }

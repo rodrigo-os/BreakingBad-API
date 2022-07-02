@@ -13,17 +13,19 @@ data class LocalCharacter(
     val nickname: String,
     val img: String,
     val status: String,
+    val portrayed: String,
 )
 
 fun List<LocalCharacter>.asDomainModel(): List<Character> {
-    return map{
+    return map {
         Character(
             char_id = it.char_id,
             birthday = it.birthday,
             name = it.name,
             nickname = it.nickname,
             img = it.img,
-            status = it.status
+            status = it.status,
+            portrayed = it.portrayed,
         )
     }
 }

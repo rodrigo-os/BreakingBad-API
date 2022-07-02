@@ -2,10 +2,8 @@ package com.example.breakingbad.views
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
@@ -28,45 +26,74 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.breakingbad.data.domain.Character
 import com.example.breakingbad.R
 
-private const val BASE_URL = "https://www.breakingbadapi.com"
-
 @Composable
 fun CharacterListScreen(
-    charactersViewModel: CharactersViewModel
+    charactersViewModel: CharactersViewModel,
+    navController: NavController
 ) {
-    val charactersList by charactersViewModel.characters.observeAsState(listOf())
-    CharacterList(characterList = charactersList)
+    val charactersList by charactersViewModel.characterList.observeAsState(listOf())
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .background(Color.Black)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(0.dp, 10.dp, 0.dp, 10.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Breaking Bad",
+                style = MaterialTheme.typography.h4.copy(
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
+        CharacterList(
+            charactersList,
+            navController
+        )
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CharacterList(
-    characterList: List<Character>
+    characterList: List<Character>,
+    navController: NavController
 ) {
     LazyVerticalGrid(
         modifier = Modifier.background(Color.LightGray),
         cells = GridCells.Fixed(2)
     ) {
-        items(characterList) { character ->
-            CharacterEntry(character = character)
+        items(characterList) {
+            CharacterEntry(it) {
+                navController.navigate("characterList/${it.char_id}")
+            }
         }
     }
 }
 
 @Composable
 fun CharacterEntry(
-    character: Character
+    character: Character,
+    characterDetail: () -> Unit
 ) {
     val density = LocalDensity.current.density
-    val width = remember { mutableStateOf(0F)}
-    val height = remember { mutableStateOf(0F)}
+    val width = remember { mutableStateOf(0F) }
+    val height = remember { mutableStateOf(0F) }
     Card(
-        modifier = Modifier.padding(6.dp),
+        modifier = Modifier
+            .padding(6.dp)
+            .clickable { characterDetail() },
         elevation = 8.dp
 
     ) {
@@ -82,25 +109,26 @@ fun CharacterEntry(
                 modifier = Modifier
                     .fillMaxWidth()
                     .onGloballyPositioned {
-                        width.value = it.size.width/density
-                        height.value = it.size.height/density
+                        width.value = it.size.width / density
+                        height.value = it.size.height / density
                     }
             )
-            Box(modifier = Modifier
-                .size(width.value.dp, height.value.dp)
-                .background(
-                    Brush.verticalGradient(
-                    listOf(Color.Transparent, Color.Black),
-                        60F,
-                        680F,
+            Box(
+                modifier = Modifier
+                    .size(width.value.dp, height.value.dp)
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(Color.Transparent, Color.Black),
+                            80F,
+                            700F,
+                        )
                     )
-                )
             )
             Text(
                 text = character.name,
                 modifier = Modifier
                     .align(Alignment.BottomCenter),
-                style = MaterialTheme.typography.h5.copy(
+                style = MaterialTheme.typography.h6.copy(
                     color = Color.White, fontWeight = FontWeight.Bold
                 )
             )

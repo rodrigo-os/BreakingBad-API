@@ -24,7 +24,7 @@ interface BreakingBadApiService {
 }
 
 object BreakingBadApi {
-    val retrofitService: BreakingBadApiService by lazy{
+    val retrofitService: BreakingBadApiService by lazy {
         retrofit.create(BreakingBadApiService::class.java)
     }
 }
